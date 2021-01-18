@@ -7,7 +7,7 @@
           <h2><%= pluralize(greeting.errors.count, "error") %> prohibited this greeting from being saved:</h2>
 
           <ul>
-            <% greeting.errors.full_message.each do |message| %>
+            <% greeting.errors.full_messages.each do |message| %>
               <li><%= message %></li>
             <% end %>
           </ul>
