@@ -1,0 +1,31 @@
+version: "3" 
+services:
+  web_guesto:
+    image: alexrogna/guesto_web:prod
+    expose:
+      - 3000
+    env_file:
+      - .env/production/database_guesto
+      - .env/production/web_guesto
+    environment:
+      - VIRTUAL_HOST=guesto.alexrogna.com
+      - VIRTUAL_PORT=3000
+      - LETSENCRYPT_HOST=guesto.alexrogna.com
+    restart: always
+
+  database_guesto:
+    image: postgres
+    env_file:
+      - .env/production/database_guesto
+    volumes:
+      - db_data_guesto:/var/lib/postgresql/data
+    restart: always
+    
+  db-migrator_guesto:
+    image: alexrogna/guesto_web:prod
+    command: ["./wait-for", "--timeout=300", "database_guesto:5432", "--", "bin/rails", "db:create" , "db:migrate"]
+    env_file:
+      - .env/production/database_guesto
+      - .env/production/web_guesto
+volumes:
+  db_data_guesto:

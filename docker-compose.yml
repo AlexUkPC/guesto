@@ -1,0 +1,44 @@
+version: "3"
+services:
+  web_guesto:
+    build:
+      context: .
+      args:
+        USER_ID: "${USER_ID:-1000}"
+        GROUP_ID: "${GROUP_ID:-1000}"
+    ports:
+      - "3011:3000"
+    volumes: 
+      - ./guesto:/opt/app
+      - gem_cache_guesto:/gems
+    env_file: 
+      - .env/development/database_guesto
+      - .env/development/web_guesto
+    environment: 
+      - WEBPACKER_DEV_SERVER_HOST=webpack_dev_server_guesto
+  webpack_dev_server_guesto:
+    build:
+      context: .
+      args:
+        USER_ID: "${USER_ID:-1000}"
+        GROUP_ID: "${GROUP_ID:-1000}"
+    command: ./bin/webpack-dev-server
+    ports: 
+      - "3046:3046"
+    volumes: 
+      - ./guesto:/opt/app
+      - gem_cache_guesto:/gems
+    env_file: 
+      - .env/development/database_guesto
+      - .env/development/web_guesto
+    environment: 
+      - WEBPACKER_DEV_SERVER_HOST=0.0.0.0
+  database_guesto:
+    image: postgres
+    env_file: 
+      - .env/development/database_guesto
+    volumes: 
+      - db_data_guesto:/var/lib/postgresql/data
+volumes: 
+  db_data_guesto:
+  gem_cache_guesto:
